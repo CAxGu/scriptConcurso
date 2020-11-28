@@ -1,0 +1,3 @@
+silfu:5
+exo:5
+melas:15
