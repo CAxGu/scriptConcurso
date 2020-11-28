@@ -1,2 +1,2 @@
-./BackupParticipantes
-./participantes.txt
+.BackupParticipantes/
+*.txt
