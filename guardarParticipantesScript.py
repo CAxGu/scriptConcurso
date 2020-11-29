@@ -49,65 +49,43 @@ def gestionarParticipantes():
     actualizarFicheroParticipantes(participantesList)
 
 def actualizarListadoParticipantes(participantesList):
-    participantesListTemporal=[]
-    if participantesList==[]:
+    participantesListTemporal=participantesList
+    if participantesListTemporal==[]:
         #La variable op.linesep te permitirá obtener los caracteres necesarios para crear el salto de línea de acuerdo al sistema operativo donde estés ejecutando esta rutina.
         participanteNuevo=str(participante)+':'+str(ticketsGanados)
         participantesListTemporal.append(participanteNuevo)
     else:
-        print('tengo Participantes')
-        for idx, participanteLinea in enumerate(participantesList): 
-            print('index: '+str(idx))
-            if not participanteLinea == '' and not participanteLinea == '\n':
-                print('participanteLinea: '+participanteLinea)
-                #Obtenemos el nombre de usuario del participante
-                usuario=participanteLinea.split(':')[0]
-                print('usuario: '+usuario)
-                #Obtenemos los tickets del usuario. Eliminamos saltos de linea
-                totalTickets=participanteLinea.split(':')[1]
-                tickets=int(totalTickets.split(saltoDeLinea)[0])
-                if participante in usuario:
-                    print('usuario2: '+usuario)
-                    print('participante: '+participante)
-                    ticketsActualizados=tickets+ticketsGanados
-                    #Comprobamos que no supera el máximo de tickets para el sorteo
-                    if tickets<ticketsMaximosEvento and ticketsActualizados<=ticketsMaximosEvento:
-                        print('es un parguela')
-                        participanteActualizado=str(participante)+':'+str(ticketsActualizados)
-                        print('participanteActualizado: '+participanteActualizado)
-                        #participantesListTemporal.append(participanteActualizado)
-                        if len(participantesListTemporal) == 0:
-                            participantesListTemporal.append(participanteActualizado)
+        #Comprobamos si el participante que queremos incluir ya está en el listado
+        if verificarDuplicados(participantesListTemporal,participante):
+            #Es una actualizacion de tickets
+            for idx, participanteLinea in enumerate(participantesListTemporal): 
+                if not participanteLinea == '' and not participanteLinea == '\n':
+                    #Obtenemos el nombre de usuario del participante
+                    usuario=participanteLinea.split(':')[0]
+                    
+                    if participante in usuario:
+                        #Obtenemos los tickets del usuario. Eliminamos saltos de linea
+                        totalTickets=participanteLinea.split(':')[1]
+                        tickets=int(totalTickets.split(saltoDeLinea)[0])
+                        ticketsActualizados=tickets+ticketsGanados
+                        #Comprobamos que el total de tickets no supera el maximo
+                        if tickets<ticketsMaximosEvento and ticketsActualizados<=ticketsMaximosEvento:
+                            participanteActualizado=str(participante)+':'+str(ticketsActualizados)
                         else:
-                            participantesListTemporal[idx] = participanteActualizado
-                        print('despues de ser un parguela:')
-                        print(participantesListTemporal)
-                    else:
-                        print('supera el maximo')
-                        #Si ya tiene 20 tickets o supera el máximo, se le mantienen sus 20 
-                        participanteActualizado=str(participante)+':'+str(ticketsMaximosEvento) 
-                        if len(participantesListTemporal) == 0:
-                            participantesListTemporal.append(participanteActualizado)
-                        else:
-                            participantesListTemporal[idx] = participanteActualizado
+                            participanteActualizado=str(participante)+':'+str(ticketsMaximosEvento)
 
-                        print('despues de superar el maximo:')
-                        print(participantesListTemporal)
-                else:
-                    if not participanteLinea == '\n':
-                        participantesListTemporal.append(participanteLinea)
-                        #Verificamos que no se ha incluido ya el participante
-                        if not verificarDuplicados(participantesListTemporal,str(participante)):
-                            nuevoParticipante=str(participante)+':'+str(ticketsGanados)
-                            participantesListTemporal.append(nuevoParticipante)
-
-    print('despues de Actualizar:')
-    print(participantesListTemporal)
+                        participantesListTemporal[idx] = participanteActualizado
+        else:
+            #Es un participante nuevo
+            nuevoParticipante=str(participante)+':'+str(ticketsGanados)
+            participantesListTemporal.append(nuevoParticipante)
+       
     return participantesListTemporal
 
 def actualizarFicheroParticipantes(participantesList):
     with open(fichero,'w+') as participantesFile:
         for lineaParticipante in participantesList: 
+            #Eliminamos el salto de linea antes de reescribirla
             participanteSinSalto=lineaParticipante.split(saltoDeLinea)[0]
             print >> participantesFile, participanteSinSalto
 
