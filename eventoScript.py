@@ -2,23 +2,29 @@
 # -*- coding: utf-8 -*-
 import sys, shutil, os
 from datetime import datetime
+import clr
+clr.AddReference("IronPython.Modules.dll")
 
-saltoDeLinea = '\n'
-ticketsMaximosEvento=20
-#Nombre del Participante. args[1] pasado en ejecucion
-participante = str(sys.argv[1]).lower()
+def Init():
+    global 
+    global ticketsMaximosEvento=20
+    #Nombre del Participante. args[1] pasado en ejecucion
+    global participante = str(sys.argv[1]).lower()
 
-#Tickets que gana. args[2] pasado en ejecucion
-ticketsGanados=int(sys.argv[2])
+    #Tickets que gana. args[2] pasado en ejecucion
+    global ticketsGanados=int(sys.argv[2])
 
-#Ruta Directorio Backups
-nombreDirectorio='BackupParticipantes'
-directorioBkp=nombreDirectorio+'/'
+    #Ruta Directorio Backups
+    global nombreDirectorio='BackupParticipantes'
+    global directorioBkp=nombreDirectorio+'/'
 
-#Fichero de participantes
-nombreFichero='participantes'
-extension='.txt'
-fichero=nombreFichero+extension
+    #Fichero de participantes
+    global nombreFichero='participantes'
+    global extension='.txt'
+    global fichero=nombreFichero+extension
+    
+    gestionarParticipantes()
+    return
 
 def gestionarParticipantes():
     #Comprobamos que ya exista un fichero de Participantes, sino lo creamos
@@ -95,5 +101,3 @@ def verificarDuplicados(participantesListTemporal,usuarioActual):
         if participanteNuevo==usuarioActual:
             return True
     return False
-
-gestionarParticipantes()
